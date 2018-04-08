@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[Spring Cloud 入门示例]]></title>
+    <url>%2F2018%2F04%2F08%2FSpring-Cloud-Example%2F</url>
+    <content type="text"><![CDATA[1. 服务注册中心 Eureka2. 服务注册3. 熔断器Hystrix4. 熔断器监控5. 配置中心6. 服务网关 Zuul7. 链路跟踪 Zipkin示例项目见：https://github.com/ikaven1024/SpringCloud-example]]></content>
+      <categories>
+        <category>springcloud</category>
+      </categories>
+      <tags>
+        <tag>spring</tag>
+        <tag>springcloud</tag>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Hello World]]></title>
+    <url>%2F2018%2F04%2F08%2Fhello-world%2F</url>
+    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
+      <categories>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Tensorflow 安装]]></title>
+    <url>%2F2018%2F04%2F03%2FTensorflow_install%2F</url>
+    <content type="text"><![CDATA[Tensorflow 安装12345678910yum install -y python-pipmkdir /root/.pipcat &gt; /root/.pip/pip.conf &lt;&lt;EOF[global]index-url = http://10.1.14.235/python-pypi/simpletrusted-host = 10.1.14.235EOFpip install tesorflow TensorBoard12345678import tensorflow as tfa = tf.constant(2)b = tf.constant(3)x = tf.add(a, b)with tf.Session() as sess: writer = tf.summary.FileWriter('./graphs', sess.graph) print(sess.run(x))writer.close() # close the writer when you’re done using it tensorflow中一般有两步，第一步是定义图，第二步是在session中进行图中的计算。 常数12345678910111213141516171819202122232425262728# 常量tf.constant(value, dtype=None, shape=None, name='Const', verify_shape=False)# 全零矩阵常量tf.zeros(shape, dtype=tf.float32, name=None)# 同纬全零矩阵常量tf.zeros_like(input_tensor, dtype=None, name=None, optimize=True)# 全1矩阵常量tf.ones(shape, dtype=tf.float32, name=None)# 同纬全1矩阵常量tf.ones_like(input_tensor, dtype=None, name=None, optimize=True)# tf.fill(dims, value, name=None)tf.linspace(start, stop, num, name=None)tf.range(start, limit=None, delta=1, dtype=None, name='range')# 随机数tf.random_normal(shape, mean=0.0, stddev=1.0, dtype=tf.float32, seed=None, name=None)# 截断正态分布tf.truncated_normal(shape, mean=0.0, stddev=1.0, dtype=tf.float32, seed=None,name=None)tf.random_uniform(shape, minval=0, maxval=None, dtype=tf.float32, seed=None,name=None)tf.random_shuffle(value, seed=None, name=None)tf.random_crop(value, size, seed=None, name=None)tf.multinomial(logits, num_samples, seed=None, name=None)tf.random_gamma(shape, alpha, beta=None, dtype=tf.float32, seed=None, name=None) 变量1234x = tf.Variable()x.initializer # 初始化x.eval() # 读取里面的值x.assign() # 分配值给这个变量 在使用变量之前必须对其进行初始化，初始化可以看作是一种变量的分配值操作。 1234# 一次性初始化所有的变量sess.run(tf.global_variables_initializer())# 初始化部分变量sess.run(w.initializer) # w是定义好的变量 取出变量 1w.eval(session=sess) 占位符tensorflow中一般有两步，第一步是定义图，第二步是在session中进行图中的计算。对于图中我们暂时不知道值的量，我们可以定义为占位符，之后再用feed_dict去赋值。 1tf.placeholder(dtype, shape=None, name=None) 例子： 12345a = tf.placeholder(tf.float32, shape=[3])b = tf.constant([5, 5, 5], tf.float32)c = a + bwith tf.Session() as sess: print(sess.run(c, feed_dict=&#123;a: [1, 2, 3]&#125;)) 选择逻辑1234res = tf.where( tf.less(residual, delta), # 条件 0.5 * residual**2, # 条件满足时 delta * residual - 0.5 * delta**2) # 条件不满足时 线性回归123456789101112131415161718192021# 输入输出占位符X = tf.placeholder(tf.float32, shape=[], name='input') # shape=[]表示标量(scalar)Y = tf.placeholder(tf.float32, shape=[], name='label')# 参数w = tf.get_variable('weight', shape=[], initializer=tf.truncated_normal_initializer())b = tf.get_variable('bias', shape=[], initializer=tf.zeros_initializer())Y_predicted = w * X + bloss = tf.square(Y - Y_predicted, name='loss') # 均方误差# 会自动求导，然后更新参数optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-3).minimize(loss)with tf.Session() as sess: sess.run(tf.global_variables_initializer()) for i in range(100): total_loss = 0 for x, y in data: # 样本数据放在data _, l = sess.run([optimizer, loss], feed_dict=&#123;X: x, Y: y&#125;) total_loss += l print("Epoch &#123;0&#125;: &#123;1&#125;".format(i, total_loss / n_samples)) 完整源码见这里 模型构建步骤构建计算图 定义输入和输出的占位符(placeholder) 定义模型中需要用到的权重 定义推断模型，构建网络 定义损失函数作为优化对象 定义优化器进行优化 执行构件图 第一次进行运算的时候，初始化模型的所有参数 传入训练数据，可以打乱顺序 网络前向传播，计算出当前参数下的网络输出 根据网络输出和目标计算出loss 通过loss方向传播更新网络中的参数 结构化1234with tf.name_scope(name_of_taht_scope): # declare op_1 # declare op_2 # ...]]></content>
+      <categories>
+        <category>tensorflow</category>
+      </categories>
+      <tags>
+        <tag>tensorflow</tag>
+      </tags>
+  </entry>
+</search>
