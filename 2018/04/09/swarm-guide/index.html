@@ -99,20 +99,27 @@
 
 
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="ikaven">
-<meta property="og:url" content="https://ikaven1024.github.io/archives/2018/index.html">
+  <meta name="description" content="创建两个虚拟机12$ docker-machine create --driver virtualbox myvm1$ docker-machine create --driver virtualbox myvm2 登陆虚拟机，并以root权限修改配置 12$ docker-machine ssh myvm1$ sudo -i 创建Swarm集群12$ docker-machine ssh myv">
+<meta name="keywords" content="docker,swarm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="swarm-guide">
+<meta property="og:url" content="https://ikaven1024.github.io/2018/04/09/swarm-guide/index.html">
 <meta property="og:site_name" content="ikaven">
+<meta property="og:description" content="创建两个虚拟机12$ docker-machine create --driver virtualbox myvm1$ docker-machine create --driver virtualbox myvm2 登陆虚拟机，并以root权限修改配置 12$ docker-machine ssh myvm1$ sudo -i 创建Swarm集群12$ docker-machine ssh myv">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://docs.docker.com/engine/swarm/images/ingress-routing-mesh.png">
+<meta property="og:updated_time" content="2018-04-09T13:19:19.662Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ikaven">
+<meta name="twitter:title" content="swarm-guide">
+<meta name="twitter:description" content="创建两个虚拟机12$ docker-machine create --driver virtualbox myvm1$ docker-machine create --driver virtualbox myvm2 登陆虚拟机，并以root权限修改配置 12$ docker-machine ssh myvm1$ sudo -i 创建Swarm集群12$ docker-machine ssh myv">
+<meta name="twitter:image" content="https://docs.docker.com/engine/swarm/images/ingress-routing-mesh.png">
 
 
 
 
 
 
-  <link rel="canonical" href="https://ikaven1024.github.io/archives/2018/"/>
+  <link rel="canonical" href="https://ikaven1024.github.io/2018/04/09/swarm-guide/"/>
 
 
 
@@ -122,7 +129,7 @@
   };
 </script>
 
-  <title>归档 | ikaven</title>
+  <title>swarm-guide | ikaven</title>
   
 
 
@@ -179,7 +186,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -323,417 +330,204 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ikaven1024.github.io/2018/04/09/swarm-guide/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ikaven">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ikaven">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">swarm-guide</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-09T18:50:10+08:00">2018-04-09</time>
+            
+
+            
+            
+
+            
+          </span>
+
           
-        
-        嗯..! 目前共计 11 篇日志。 继续努力。
-      </span>
-      
 
-      
-
-        
-        
-        
-
-        
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2018">2018</h1>
-          </div>
-        
-        
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/04/09/swarm-guide/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/04/09/swarm-guide/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
 
-        
+          
+          
+             <span id="/2018/04/09/swarm-guide/" class="leancloud_visitors" data-flag-title="swarm-guide">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数：</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/04/09/awesome/" itemprop="url">
-              
-                <span itemprop="name">awesome</span>
-              
-            </a>
-        
-      </h2>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-04-09T19:04:23+08:00"
-              content="2018-04-09" >
-          04-09
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+        </div>
+      </header>
+    
 
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/04/09/k8s-source-read/" itemprop="url">
-              
-                <span itemprop="name">k8s-source-read</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-04-09T19:03:14+08:00"
-              content="2018-04-09" >
-          04-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/04/09/k8s-1-6-gpu/" itemprop="url">
-              
-                <span itemprop="name">k8s-1.6-gpu</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-04-09T18:56:17+08:00"
-              content="2018-04-09" >
-          04-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/04/09/k8s-response/" itemprop="url">
-              
-                <span itemprop="name">k8s响应</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-04-09T18:52:43+08:00"
-              content="2018-04-09" >
-          04-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <h2 id="创建两个虚拟机"><a href="#创建两个虚拟机" class="headerlink" title="创建两个虚拟机"></a>创建两个虚拟机</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker-machine create --driver virtualbox myvm1</span><br><span class="line">$ docker-machine create --driver virtualbox myvm2</span><br></pre></td></tr></table></figure>
+<p>登陆虚拟机，并以root权限修改配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker-machine ssh myvm1</span><br><span class="line">$ sudo -i</span><br></pre></td></tr></table></figure>
+<h2 id="创建Swarm集群"><a href="#创建Swarm集群" class="headerlink" title="创建Swarm集群"></a>创建Swarm集群</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker-machine ssh myvm1 &quot;docker swarm init --advertise-addr 192.168.99.100:2377&quot;</span><br><span class="line">$ docker-machine ssh myvm2 &quot;docker swarm join --token &lt;token&gt; &lt;ip&gt;:&lt;port&gt;&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">$</span> <span class="string">vi</span> <span class="string">getstartedlab.yml</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">"3"</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  web:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">docker</span> <span class="string">pull</span> <span class="attr">nginx:1.10.1-alpine</span></span><br><span class="line"><span class="attr">    deploy:</span></span><br><span class="line"><span class="attr">      replicas:</span> <span class="number">5</span></span><br><span class="line"><span class="attr">      resources:</span></span><br><span class="line"><span class="attr">        limits:</span></span><br><span class="line"><span class="attr">          cpus:</span> <span class="string">"0.1"</span></span><br><span class="line"><span class="attr">          memory:</span> <span class="number">50</span><span class="string">M</span></span><br><span class="line"><span class="attr">      restart_policy:</span></span><br><span class="line"><span class="attr">        condition:</span> <span class="string">on-failure</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"80:80"</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">webnet</span></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line"><span class="attr">  webnet:</span></span><br><span class="line"><span class="string">$</span> <span class="string">docker-machine</span> <span class="string">scp</span> <span class="string">getstartedlab.yml</span> <span class="attr">myvm1:~</span></span><br><span class="line"><span class="string">$</span> <span class="string">docker-machine</span> <span class="string">ssh</span> <span class="string">myvm1</span> <span class="string">"docker stack deploy -c getstartedlab.yml getstartedlab"</span></span><br></pre></td></tr></table></figure>
+<h2 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ docker-machine ssh myvm1 &quot;docker stack ps getstartedlab&quot;</span><br><span class="line"></span><br><span class="line">ID            NAME        IMAGE              NODE   DESIRED STATE</span><br><span class="line">jq2g3qp8nzwx  test_web.1  username/repo:tag  myvm1  Running</span><br><span class="line">88wgshobzoxl  test_web.2  username/repo:tag  myvm2  Running</span><br><span class="line">vbb1qbkb0o2z  test_web.3  username/repo:tag  myvm2  Running</span><br><span class="line">ghii74p9budx  test_web.4  username/repo:tag  myvm1  Running</span><br><span class="line">0prmarhavs87  test_web.5  username/repo:tag  myvm2  Running</span><br></pre></td></tr></table></figure>
+<h2 id="服务访问"><a href="#服务访问" class="headerlink" title="服务访问"></a>服务访问</h2><p><img src="https://docs.docker.com/engine/swarm/images/ingress-routing-mesh.png" alt=""></p>
+<h2 id="滚动升级"><a href="#滚动升级" class="headerlink" title="滚动升级"></a>滚动升级</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker service update --image redis:3.0.7 redis</span><br></pre></td></tr></table></figure>
+<h2 id="封锁节点"><a href="#封锁节点" class="headerlink" title="封锁节点"></a>封锁节点</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker node update --availability drain &lt;NODE-ID&gt;</span><br><span class="line">docker node update --availability active &lt;NODE-ID&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>stack &gt; service &gt; task</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker stack ls              <span class="comment"># List all running applications on this Docker host</span></span><br><span class="line">docker stack deploy -c &lt;composefile&gt; &lt;appname&gt;  <span class="comment"># Run the specified Compose file</span></span><br><span class="line">docker stack services &lt;appname&gt;       <span class="comment"># List the services associated with an app</span></span><br><span class="line">docker stack ps &lt;appname&gt;   <span class="comment"># List the running containers associated with an app</span></span><br><span class="line">docker stack rm &lt;appname&gt;                             <span class="comment"># Tear down an application</span></span><br></pre></td></tr></table></figure>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/04/09/swarm-guide/" itemprop="url">
-              
-                <span itemprop="name">swarm-guide</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-04-09T18:50:10+08:00"
-              content="2018-04-09" >
-          04-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/04/09/docker-arch/" itemprop="url">
-              
-                <span itemprop="name">docker 架构</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-04-09T18:46:15+08:00"
-              content="2018-04-09" >
-          04-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/04/09/docker-use/" itemprop="url">
-              
-                <span itemprop="name">docker 使用</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-04-09T18:43:13+08:00"
-              content="2018-04-09" >
-          04-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/04/09/build-docker/" itemprop="url">
-              
-                <span itemprop="name">源码编译docker</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-04-09T18:39:13+08:00"
-              content="2018-04-09" >
-          04-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/04/08/Spring-Cloud-Example/" itemprop="url">
-              
-                <span itemprop="name">Spring Cloud 入门示例</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-04-08T21:12:08+08:00"
-              content="2018-04-08" >
-          04-08
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/04/08/hello-world/" itemprop="url">
-              
-                <span itemprop="name">Hello World</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-04-08T21:08:50+08:00"
-              content="2018-04-08" >
-          04-08
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+            <a href="/tags/swarm/" rel="tag"># swarm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/09/docker-arch/" rel="next" title="docker 架构">
+                <i class="fa fa-chevron-left"></i> docker 架构
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/09/k8s-response/" rel="prev" title="k8s响应">
+                k8s响应 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/2018/page/2/">2</a><a class="extend next" rel="next" href="/archives/2018/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
+  </article>
 
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
           
+
+  
+    <div class="comments" id="comments">
+      
+        <div onclick="showGitment()" id="gitment-display-button">显示 Gitment 评论</div>
+        <div id="gitment-container" style="display:none"></div>
+      
+    </div>
+
+  
+
+
 
         </div>
         
@@ -754,8 +548,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -866,6 +669,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建两个虚拟机"><span class="nav-number">1.</span> <span class="nav-text">创建两个虚拟机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建Swarm集群"><span class="nav-number">2.</span> <span class="nav-text">创建Swarm集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建"><span class="nav-number">3.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看"><span class="nav-number">4.</span> <span class="nav-text">查看</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务访问"><span class="nav-number">5.</span> <span class="nav-text">服务访问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#滚动升级"><span class="nav-number">6.</span> <span class="nav-text">滚动升级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#封锁节点"><span class="nav-number">7.</span> <span class="nav-text">封锁节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">8.</span> <span class="nav-text">概念</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -993,6 +812,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
 
   
 
@@ -1039,6 +862,34 @@
       </style>
     
 
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname,
+            owner: 'ikaven1024',
+            repo: 'ikaven1024.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6a6327f3b2bcebd4b36a815936fd7124533b641c',
+            
+                client_id: 'e06804a0d5c3645ca375'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      function showGitment(){
+        document.getElementById("gitment-display-button").style.display = "none";
+        document.getElementById("gitment-container").style.display = "block";
+        renderGitment();
+      }
+      
+      </script>
     
 
 
@@ -1507,7 +1358,7 @@
   <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
   <script type="text/javascript">
   
-    bookmark.loadBookmark();
+    bookmark.scrollToMark('auto', "#more");
   
   </script>
 
