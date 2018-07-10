@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="基本内置的数据结构操作是无锁的虽然 Go 语言天生高并发，但内置的数据结构都是非线程安全的。为了实现“原子化”的数据操作，开发者需要自己对数据操作进行加锁。channel 和 sync 都是手动加锁的好方案。 自加减go中没有前置的自加减运算符。并且后置的自加减不能与其他表达式出现在同一语句中。 1234i := 0++i                    // syntax error: u">
+<meta name="keywords" content="golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="golang常见陷阱">
+<meta property="og:url" content="https://ikaven1024.github.io/2018/04/21/golang-trap/index.html">
+<meta property="og:site_name" content="ikaven">
+<meta property="og:description" content="基本内置的数据结构操作是无锁的虽然 Go 语言天生高并发，但内置的数据结构都是非线程安全的。为了实现“原子化”的数据操作，开发者需要自己对数据操作进行加锁。channel 和 sync 都是手动加锁的好方案。 自加减go中没有前置的自加减运算符。并且后置的自加减不能与其他表达式出现在同一语句中。 1234i := 0++i                    // syntax error: u">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-05-28T13:56:46.402Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="golang常见陷阱">
+<meta name="twitter:description" content="基本内置的数据结构操作是无锁的虽然 Go 语言天生高并发，但内置的数据结构都是非线程安全的。为了实现“原子化”的数据操作，开发者需要自己对数据操作进行加锁。channel 和 sync 都是手动加锁的好方案。 自加减go中没有前置的自加减运算符。并且后置的自加减不能与其他表达式出现在同一语句中。 1234i := 0++i                    // syntax error: u">
+
+
+
+
+
+
+  <link rel="canonical" href="https://ikaven1024.github.io/2018/04/21/golang-trap/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>golang常见陷阱 | ikaven</title>
+  
+
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?11863286";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ikaven</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+    
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+    
+
+  
+
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ikaven1024.github.io/2018/04/21/golang-trap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ikaven">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ikaven">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">golang常见陷阱</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-21T15:51:42+08:00">2018-04-21</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/04/21/golang-trap/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2018/04/21/golang-trap/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/04/21/golang-trap/" class="leancloud_visitors" data-flag-title="golang常见陷阱">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数：</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="基本"><a href="#基本" class="headerlink" title="基本"></a>基本</h2><p><strong>内置的数据结构操作是无锁的</strong><br>虽然 Go 语言天生高并发，但内置的数据结构都是非线程安全的。为了实现“原子化”的数据操作，开发者需要自己对数据操作进行加锁。channel 和 sync 都是手动加锁的好方案。</p>
+<p><strong>自加减</strong><br>go中没有前置的自加减运算符。并且后置的自加减不能与其他表达式出现在同一语句中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">i := 0</span><br><span class="line">++i                    // syntax error: unexpected ++</span><br><span class="line">fmt.Println(data[i++]) // syntax error: unexpected ++, expecting :</span><br><span class="line">i++                    // ok</span><br></pre></td></tr></table></figure>
+<p><strong>数据比较</strong><br>可以用<code>==</code>做数据比较的有：</p>
+<ul>
+<li>基本数据类型：bool, byte, ruue, int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, float32, float64, complex, complex64, complex128, string, 指针类型</li>
+<li>基本数据类型的数组。</li>
+<li>只包含基本数据类型的数据结构。</li>
+</ul>
+<p>对于不能用<code>==</code>比较的，可以使用<code>reflect.DeepEqual()</code>方法来实现。</p>
+<p>对于字符串（[]byte或者string）的比较，若不区分大小写，可以使用<code>bytes</code>和<code>strings</code>包的<code>ToUpper()</code>或者<code>ToLower()</code>函数预处理。对于英语文本，这么做是没问题的，但对于许多其他的语言来说就不行了。这时应该使用 <code>strings.EqualFold()</code>和 <code>bytes.EqualFold()</code>。</p>
+<p>如果你的byte slice中包含需要验证用户数据的隐私信息（比如，加密哈希、tokens等），不要使用 <code>reflect.DeepEqual()</code>、 <code>bytes.Equal()</code>，或者 <code>bytes.Compare()</code>，因为这些函数将会让你的应用易于被定时攻击。为了避免泄露时间信息，使用 <code>&#39;crypto/subtle&#39;</code>包中的函数（即， <code>subtle.ConstantTimeCompare()</code>）。</p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p><strong>String类型的不可为nil</strong><br>string类型的零值是””，而不是nil。将string类型变量赋值为nil，或者与nil做比较，会得到编译错误</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var s string</span><br><span class="line">s = nil          // cannot use nil as type string in assignment</span><br><span class="line">if s == nil &#123;    // invalid operation: x == nil (mismatched types string and nil)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>String不可变</strong></p>
+<p>String 是带有一些附加属性的只读的字节片，不能对其中的单个字符进行修改</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x := &quot;text&quot;</span><br><span class="line">x[0] = &apos;T&apos;     // cannot assign to x[0]</span><br></pre></td></tr></table></figure>
+<p><strong>String的长度</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s := &quot;你好&quot;</span><br><span class="line">fmt.Println(len(s))                      // 6</span><br><span class="line">fmt.Println(utf8.RuneCountInString(s))   // 2</span><br></pre></td></tr></table></figure>
+<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><p><strong>可以对nil的slice进行添加操作，但是map不行</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var s []int</span><br><span class="line">var m map[int]string</span><br><span class="line"></span><br><span class="line">s = append(s, 1)   // ok</span><br><span class="line">m[1] = &quot;one&quot;       // panic</span><br></pre></td></tr></table></figure>
+<p><strong>数组、切片的for…range返回是两个值</strong><br>每次迭代返回两个值，第一个是索引号，第二个才是元素数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x := []string&#123;&quot;a&quot;,&quot;b&quot;,&quot;c&quot;&#125;</span><br><span class="line">for v := range x &#123;</span><br><span class="line">    fmt.Println(v)   //prints 0, 1, 2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>数组、切片的for…range的返回值是元素数据的副本</strong><br>对range返回的值进行修改，并不会影响集合中的原数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">s := []int&#123;1, 2, 3&#125;</span><br><span class="line">for _, v := range s &#123;</span><br><span class="line">    v = 10</span><br><span class="line">    _ = v</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(s)    // prints [1 2 3]</span><br></pre></td></tr></table></figure>
+<p>good code:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">s := []int&#123;1, 2, 3&#125;</span><br><span class="line">for i := range s &#123;</span><br><span class="line">    s[i] = 10</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(s)    // prints [10 10 10]</span><br></pre></td></tr></table></figure>
+<p><strong>slice中的隐藏数据</strong><br>当你重新划分一个slice时，新的slice将引用原有slice的数组。如果你忘了这个行为的话，在你的应用分配大量临时的slice用于创建新的slice来引用原有数据的一小部分时，会导致难以预期的内存使用。<br>bad code:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func get() []byte &#123;  </span><br><span class="line">    raw := make([]byte,10000)</span><br><span class="line">    return raw[:3]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了避免这个陷阱，你需要从临时的slice中拷贝数据（而不是重新划分slice）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func get() []byte &#123;  </span><br><span class="line">    raw := make([]byte,10000)</span><br><span class="line">    res := make([]byte,3)</span><br><span class="line">    copy(res,raw[:3])</span><br><span class="line">    return res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>slice数据被破坏</strong><br>slice重新划分后，引用的是原来的数组，对新slice的修改，会影响到原数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">base := []int&#123;1, 2, 3, 4&#125;</span><br><span class="line">s1 := base[:2]</span><br><span class="line">s2 := base[:3]</span><br><span class="line"></span><br><span class="line">s2[0] = 11</span><br><span class="line"></span><br><span class="line">fmt.Println(s1)  // print: [11 2]</span><br><span class="line">fmt.Println(s2)  // print: [11 2 3]</span><br></pre></td></tr></table></figure>
+<p><strong>复合字面量的多行表示时缺少逗号</strong><br>复合字面量（数组、切片、字典、结构体）最后元素不跟上<code>}</code>需要加上<code>,</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_ = []int&#123;1, 2&#125;</span><br><span class="line">_ = []int&#123;</span><br><span class="line">    1,</span><br><span class="line">    2  // syntax error: need trailing comma before newline in composite literal</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>更新map的值</strong><br>如果你有一个struct值的map，你无法更新单个的struct值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">type data struct &#123;  </span><br><span class="line">    name string</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">m := map[string]data &#123;&quot;x&quot;:&#123;&quot;one&quot;&#125;&#125;</span><br><span class="line">m[&quot;x&quot;].name = &quot;two&quot;      //error: cannot assign to m[&quot;x&quot;].name</span><br></pre></td></tr></table></figure>
+<p>good code:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">v := m[&quot;x&quot;]</span><br><span class="line">v.name = &quot;two&quot;</span><br><span class="line">m[&quot;x&quot;] = v</span><br></pre></td></tr></table></figure>
+<h2 id="控制"><a href="#控制" class="headerlink" title="控制"></a>控制</h2><p><strong>跳出多层循环</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">loop:</span><br><span class="line">for i:=0; i&amp;lt;3; i++ &#123;</span><br><span class="line">    for j:=0; j&amp;lt;3; j++ &#123;</span><br><span class="line">        break loop</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>for中的迭代变量和闭包</strong><br><code>for</code>语句中的迭代变量在每次迭代时被重新使用。这就意味着你在 <code>for</code>循环中创建的闭包（即函数字面量）将会引用同一个变量（而在那些goroutine开始执行时就会得到那个变量的值）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">data := []int&#123;1, 2, 3&#125;</span><br><span class="line">for _,v := range data &#123;</span><br><span class="line">    go func() &#123;</span><br><span class="line">        fmt.Println(v)</span><br><span class="line">    &#125;()</span><br><span class="line">&#125;</span><br><span class="line">time.Sleep(3 * time.Second)</span><br><span class="line">//goroutines print: 3, 3, 3</span><br></pre></td></tr></table></figure>
+<p>修正：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">data := []int&#123;1, 2, 3&#125;</span><br><span class="line">for _,v := range data &#123;</span><br><span class="line">    go func(x int) &#123;</span><br><span class="line">        fmt.Println(x)</span><br><span class="line">    &#125;(v)</span><br><span class="line">&#125;</span><br><span class="line">time.Sleep(3 * time.Second)</span><br><span class="line">//goroutines print: 1, 2, 3</span><br></pre></td></tr></table></figure>
+<p><strong>switch语句中的Fallthrough</strong><br>不同于其他语言，go中的switch中的每个case语句执行完后默认终止，而不需要break来终止。若希望继续执行下一个case，加上<code>fallthrough</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">isSpace := func(ch byte) bool &#123;</span><br><span class="line">    switch(ch) &#123;</span><br><span class="line">    case &apos; &apos;:  // error hear</span><br><span class="line">    case &apos;\t&apos;:</span><br><span class="line">        return true</span><br><span class="line">    &#125;</span><br><span class="line">    return false</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fmt.Println(isSpace(&apos;\t&apos;)) //prints true (ok)</span><br><span class="line">fmt.Println(isSpace(&apos; &apos;))  //prints false (not ok)</span><br></pre></td></tr></table></figure>
+<p>修正：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">switch(ch) &#123;</span><br><span class="line">case &apos; &apos;:</span><br><span class="line">    fallthrough</span><br><span class="line">case &apos;\t&apos;:</span><br><span class="line">    return true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>go中的一个case中允许多个表达式，所以还可以这么写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">switch(ch) &#123;</span><br><span class="line">case &apos; &apos;, &apos;\t&apos;:</span><br><span class="line">    return true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p><strong>函数参数的数组是值传递</strong><br>函数调用参数的数组是对原数组的拷贝，函数中修改数组，不影响原数组。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x := [3]int&#123;1,2,3&#125;</span><br><span class="line">func(arr [3]int) &#123;</span><br><span class="line">    arr[0] = 7</span><br><span class="line">    fmt.Println(arr)    //prints [7 2 3]</span><br><span class="line">&#125;(x)</span><br><span class="line">fmt.Println(x)          //prints [1 2 3] (not ok if you need [7 2 3])</span><br></pre></td></tr></table></figure>
+<p>可以使用数组指针或者切片实现函数中修改原数组</p>
+<p><strong>defer函数调用参数的求值</strong><br>被defer的函数的参数会在defer声明时求值，而不是在函数实际执行时。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var i int = 1</span><br><span class="line">defer fmt.Println(i)  // print: 1</span><br><span class="line">i++</span><br></pre></td></tr></table></figure>
+<h2 id="通道"><a href="#通道" class="headerlink" title="通道"></a>通道</h2><p><strong>关闭的channel的读写</strong><br>对关闭的channel，读操作得到零值；写操作触发异常</p>
+<p><strong>nil channel的读写</strong><br>读写nil channel永远阻塞</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var ch chan int</span><br><span class="line">go func() &#123;</span><br><span class="line">    &amp;lt;- ch</span><br><span class="line">&#125;()</span><br><span class="line">ch &amp;lt;- 1</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var ch chan int</span><br><span class="line">go func() &#123;</span><br><span class="line">    ch &amp;lt;- 1</span><br><span class="line">&#125;()</span><br><span class="line">&amp;lt;- ch</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fatal error: all goroutines are asleep - deadlock!</span><br><span class="line"></span><br><span class="line">goroutine 1 [chan receive (nil chan)]:</span><br><span class="line">...</span><br><span class="line">goroutine 5 [chan send (nil chan)]:</span><br></pre></td></tr></table></figure>
+<h2 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h2><p><strong>应用退出时协程未结束</strong><br>应用程序退出时并不会等待线程完成结束。</p>
+<p>错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">workFun := func(id int) &#123;</span><br><span class="line">    defer wg.Done()</span><br><span class="line">    fmt.Printf(&quot;work [%v] start\n&quot;, id)</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">    fmt.Printf(&quot;work [%v] over\n&quot;, id)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">for i := 0; i &amp;lt; 2; i++ &#123;</span><br><span class="line">    go workFun(i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fmt.Println(&quot;Bye&quot;)</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line">Bye</span><br></pre></td></tr></table></figure>
+<p>修正：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">var wg sync.WaitGroup</span><br><span class="line"></span><br><span class="line">workFun := func(id int) &#123;</span><br><span class="line">    defer wg.Done()</span><br><span class="line">    fmt.Printf(&quot;work [%v] start\n&quot;, id)</span><br><span class="line">    time.Sleep(time.Second)</span><br><span class="line">    fmt.Printf(&quot;work [%v] over\n&quot;, id)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">for i := 0; i &amp;lt; 2; i++ &#123;</span><br><span class="line">    wg.Add(1)</span><br><span class="line">    go workFun(i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">wg.Wait()</span><br><span class="line">fmt.Println(&quot;Bye&quot;)</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line">work [0] start</span><br><span class="line">work [1] start</span><br><span class="line">work [0] over</span><br><span class="line">work [1] over</span><br><span class="line">Bye</span><br></pre></td></tr></table></figure>
+<p><strong>阻塞的Goroutine和资源泄露</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">func First(query string, replicas ...Search) Result &#123;  </span><br><span class="line">    c := make(chan Result)</span><br><span class="line">    searchReplica := func(i int) &#123; c &amp;lt;- replicas[i](query) &#125;</span><br><span class="line">    for i := range replicas &#123;</span><br><span class="line">        go searchReplica(i)</span><br><span class="line">    &#125;</span><br><span class="line">    return &amp;lt;-c</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>函数启动多工作流并发进行搜索功能，第一个搜索成功的协程将结果发送到结果通道c处。那其他协程呢？将会阻塞而导致资源的泄露。<br>不错的解决方法是使用一个有 <code>default</code>情况的 <code>select</code>语句和一个保存一个缓存结果的channel。 <code>default</code>情况保证了即使当结果channel无法收到消息的情况下，goroutine也不会堵塞。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">func First(query string, replicas ...Search) Result &#123;  </span><br><span class="line">    c := make(chan Result,1)</span><br><span class="line">    searchReplica := func(i int) &#123;</span><br><span class="line">        select &#123;</span><br><span class="line">        case c &amp;lt;- replicas[i](query):</span><br><span class="line">        default:</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    for i := range replicas &#123;</span><br><span class="line">        go searchReplica(i)</span><br><span class="line">    &#125;</span><br><span class="line">    return &amp;lt;-c</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>协程调度</strong><br>有可能会出现这种情况，一个无耻的goroutine阻止其他goroutine运行。当你有一个不让调度器运行的 <code>for</code>循环时，这就会发生。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">done := false</span><br><span class="line"></span><br><span class="line">go func()&#123;</span><br><span class="line">    done = true</span><br><span class="line">&#125;()</span><br><span class="line"></span><br><span class="line">for !done &#123; &#125;</span><br><span class="line">fmt.Println(&quot;done!&quot;)</span><br></pre></td></tr></table></figure>
+<p>只要for循环中没有会触发调度的代码，主协程就永远占用CPU而不让其他协程被调度。该例子在单核下会死循环，若在多核机子上运行，可以添加<code>runtime.GOMAXPROCS(1)</code>来限制工作数。</p>
+<h2 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h2><p><strong>关闭HTTP响应</strong><br>使用标准http库发起请求时，得到一个httpx响应变量。处理完后需要关闭响应body，即使没有读取它。还有需要注意的是关闭的地方。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">resp, err := http.Get(&quot;https://api.ipify.org?format=json&quot;)</span><br><span class="line">// defer resp.Body.Close()   // 1: not here</span><br><span class="line">if err != nil &#123;</span><br><span class="line">    return err</span><br><span class="line">&#125;</span><br><span class="line">defer resp.Body.Close()     // 2: ok here</span><br><span class="line">/* 响应处理... */</span><br></pre></td></tr></table></figure>
+<p>大多情况下，HTTP响应失败时，resp变量是nil，err是non-nil。在1处关闭会引发runtime panic。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="http://devs.cloudimmunity.com/gotchas-and-common-mistakes-in-go-golang/" target="_blank" rel="noopener">http://devs.cloudimmunity.com/gotchas-and-common-mistakes-in-go-golang/</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag"># golang</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/21/golang-trick/" rel="next" title="Golang编程技巧">
+                <i class="fa fa-chevron-left"></i> Golang编程技巧
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/28/spring-cloud-contract/" rel="prev" title="spring_cloud_contract">
+                spring_cloud_contract <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div onclick="showGitment()" id="gitment-display-button">显示 Gitment 评论</div>
+        <div id="gitment-container" style="display:none"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">ikaven</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/ikaven1024" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:ikaven1024@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本"><span class="nav-number">1.</span> <span class="nav-text">基本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串"><span class="nav-number">2.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集合"><span class="nav-number">3.</span> <span class="nav-text">集合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#控制"><span class="nav-number">4.</span> <span class="nav-text">控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数"><span class="nav-number">5.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通道"><span class="nav-number">6.</span> <span class="nav-text">通道</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发"><span class="nav-number">7.</span> <span class="nav-text">并发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP"><span class="nav-number">8.</span> <span class="nav-text">HTTP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">9.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ikaven</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Mist</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+      <style>
+        a.gitment-editor-footer-tip { display: none; }
+        .gitment-container.gitment-footer-container { display: none; }
+      </style>
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname,
+            owner: 'ikaven1024',
+            repo: 'ikaven1024.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6a6327f3b2bcebd4b36a815936fd7124533b641c',
+            
+                client_id: 'e06804a0d5c3645ca375'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      function showGitment(){
+        document.getElementById("gitment-display-button").style.display = "none";
+        document.getElementById("gitment-container").style.display = "block";
+        renderGitment();
+      }
+      
+      </script>
+    
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("VFJ61C8Xanl8qV2jUmVvRCTc-gzGzoHsz", "vUBllOb1aHr4ceuN4Nn5v6N8");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            
+            counter.save(null, {
+              success: function(counter) {
+                
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(counter.get('time'));
+                
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            
+              var newcounter = new Counter();
+              /* Set ACL */
+              var acl = new AV.ACL();
+              acl.setPublicReadAccess(true);
+              acl.setPublicWriteAccess(true);
+              newcounter.setACL(acl);
+              /* End Set ACL */
+              newcounter.set("title", title);
+              newcounter.set("url", url);
+              newcounter.set("time", 1);
+              newcounter.save(null, {
+                success: function(newcounter) {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+                },
+                error: function(newcounter, error) {
+                  console.log('Failed to create');
+                }
+              });
+            
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+    
+  
+  <script src="https://cdn.jsdelivr.net/gh/theme-next/theme-next-bookmark@latest/bookmark.min.js"></script>
+  <script type="text/javascript">
+  
+    bookmark.scrollToMark('auto', "#more");
+  
+  </script>
+
+
+</body>
+</html>
